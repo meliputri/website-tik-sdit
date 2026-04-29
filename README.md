@@ -127,7 +127,7 @@ Buat kamu yang ingin menjalankan *project* ini di laptopmu (khususnya untuk dose
 1. **Siapkan Tools:** Pastikan aplikasi Laragon sudah ter- *install*.
 2. **Kloning Repo:**
    ```bash
-   git clone https://github.com/username/website-tik-sdit.git websiteku
+   git clone https://github.com/meliputri/website-tik-sdit.git websiteku
    ```
    *Pindahkan folder `websiteku` ke dalam `C:\laragon\www\`.*
 3. **Mulai Mesin:** Buka Laragon dan klik **Start All**.
