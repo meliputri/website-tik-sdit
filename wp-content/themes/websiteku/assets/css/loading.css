@@ -1,0 +1,197 @@
+/**
+ * Loading & Progress Styles
+ * 
+ * @package Websiteku
+ */
+
+/* ========== Page Loader ========== */
+.page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #2E7D32, #00838F);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.page-loader.loaded {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-content {
+    text-align: center;
+    color: white;
+}
+
+.loader-logo {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: pulse-loader 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-loader {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.loader-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.loader-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.loader-bar-fill {
+    height: 100%;
+    width: 30%;
+    background: white;
+    border-radius: 2px;
+    animation: loader-progress 1.5s infinite ease-in-out;
+}
+
+@keyframes loader-progress {
+    0% { width: 0%; margin-left: 0; }
+    50% { width: 50%; margin-left: 25%; }
+    100% { width: 0%; margin-left: 100%; }
+}
+
+/* ========== Skeleton Loading ========== */
+.skeleton-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.skeleton-loading .materi-card-content {
+    opacity: 0.7;
+}
+
+.skeleton-loaded {
+    animation: fade-in 0.5s ease forwards;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== Progress Bar ========== */
+.materi-progress {
+    margin: 12px 0;
+    padding: 10px 12px;
+    background: rgba(46, 125, 50, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(46, 125, 50, 0.1);
+}
+
+.materi-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.materi-progress-value {
+    font-weight: 600;
+    color: #2E7D32;
+}
+
+.materi-progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.materi-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2E7D32, #4CAF50);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.materi-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Progress colors based on percentage */
+.materi-progress-fill[style*="width: 0%"],
+.materi-progress-fill[style*="width: 1"],
+.materi-progress-fill[style*="width: 2"] {
+    background: linear-gradient(90deg, #FF9800, #FFC107);
+}
+
+.materi-progress-fill[style*="width: 100%"] {
+    background: linear-gradient(90deg, #2E7D32, #00838F);
+}
+
+/* ========== Info Card Loading ========== */
+.info-card.skeleton-loading .info-card-icon,
+.info-card.skeleton-loading h3,
+.info-card.skeleton-loading p {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-text 1.5s infinite;
+    color: transparent !important;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-text {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}

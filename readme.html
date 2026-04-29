@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Project Skripsi Meli 🌸</title>
+    <style>
+        :root {
+            --primary: #ff6b81;
+            --secondary: #ff7f50;
+            --accent: #ffa502;
+            --bg: #fff0f5;
+            --text: #2f3542;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(255, 107, 129, 0.15);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px dashed #ffcccb;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #57606f;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        .cute-card {
+            background: #fff9fa;
+            border: 2px solid #ffcccb;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 16px;
+            transition: transform 0.2s;
+        }
+        .cute-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 107, 129, 0.1);
+        }
+        h2 {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #ffeaa7;
+            padding-bottom: 10px;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
+        }
+        .tips-box {
+            background: linear-gradient(135deg, #fff3e0, #ffeaa7);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+        }
+        .tips-box h3 {
+            color: #d35400;
+            margin-top: 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: #ffeaa7;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #a4b0be;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>🌸 Panduan Project Skripsi Meli 🌸</h1>
+            <p>Pengembangan Chatbot AI Pembelajaran TIK Berbasis RAG <br>di SDIT Global Insan Madani</p>
+        </div>
+
+        <div class="cute-card">
+            <h2>👋 Halo Meli!</h2>
+            <p>Selamat datang di halaman utama dokumentasi project skripsimu. File ini dibuat khusus untuk membantumu memahami alur kerja website secara mudah. Jangan panik ya kalau nanti ditanya dosen penguji, semua jawabannya ada di sini! Semangat Sempro & Semhas-nya! 🎓✨</p>
+        </div>
+
+        <h2>💻 Cara Menjalankan Website (Di Laptop / Local)</h2>
+        <div class="step">
+            <div class="step-number">1</div>
+            <div>
+                <strong>Buka Aplikasi Laragon</strong><br>
+                Cari icon Laragon (warna biru) di laptop kamu.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div>
+                <strong>Nyalakan Server</strong><br>
+                Klik tombol <strong>"Start All"</strong>. Pastikan Apache dan MySQL sudah menyala hijau.
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div>
+                <strong>Buka di Browser</strong><br>
+                Buka Google Chrome, lalu ketik alamat ini: <a href="http://websiteku.test" class="highlight" target="_blank">http://websiteku.test</a>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div>
+                <strong>Login ke Admin (Bila Perlu)</strong><br>
+                Untuk mengubah materi atau quiz, masuk ke <a href="http://websiteku.test/wp-admin" class="highlight" target="_blank">http://websiteku.test/wp-admin</a>.
+            </div>
+        </div>
+
+        <h2>🤖 Cara Kerja Chatbot AI (Jawab Pertanyaan Dosen)</h2>
+        <p>Kalau dosen tanya: <em>"Meli, gimana sih cara kerja Chatbot kamu?"</em>. Jawab dengan alur ini ya:</p>
+        <div class="cute-card" style="background: #f1f2f6; border-color: #dfe4ea;">
+            <ol>
+                <li>Siswa mengetik pertanyaan di <strong>Website (Frontend)</strong>.</li>
+                <li>Pertanyaan itu dikirim ke <strong>n8n</strong> (sebagai jembatan pengatur lalu lintas data).</li>
+                <li>Di dalam n8n, terjadi proses <strong>RAG (Retrieval-Augmented Generation)</strong>:
+                    <ul>
+                        <li>Sistem mencari materi TIK yang nyambung di database pintar bernama <strong>Supabase (Vector Database)</strong>.</li>
+                    </ul>
+                </li>
+                <li>Materi yang ditemukan + pertanyaan siswa diserahkan ke <strong>Google Gemini (Otak AI)</strong>.</li>
+                <li>Google Gemini membaca materi tersebut, lalu merangkai jawaban yang ramah anak SD.</li>
+                <li>Jawaban dikirim balik ke website dan muncul di layar siswa. ✨</li>
+            </ol>
+        </div>
+
+        <div class="tips-box">
+            <h3>💡 Tips Rahasia untuk Demo Sidang (Auto Nilai A!)</h3>
+            <ul>
+                <li><strong>Tunjukkan Fallback System:</strong> Pamerkan ke dosen! Kalau internet tiba-tiba mati atau server n8n *down*, chatbot kamu <strong>tetap bisa menjawab</strong> pertanyaan dasar karena punya sistem darurat (Javascript Lokal). Ini nilai plus banget!</li>
+                <li><strong>Coba Tanyakan Hal di Luar Pelajaran:</strong> Coba tanya chatbot: <em>"Siapa presiden Indonesia?"</em>. Chatbot akan menolak dengan sopan karena sudah diprogram khusus (Prompt Engineering) untuk hanya menjawab materi TIK. Dosen pasti suka keamanan ini!</li>
+                <li><strong>Perlihatkan Fitur Kuis:</strong> Setelah baca materi, klik tombol Quiz dan tunjukkan animasi interaktif saat menjawab soal.</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            Dibuat dengan ❤️ untuk kelancaran Tugas Akhir Meli Putri Yani.<br>
+            © 2026 - Sistem Informasi
+        </div>
+    </div>
+
+</body>
+</html>

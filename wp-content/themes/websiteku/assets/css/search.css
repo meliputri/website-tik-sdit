@@ -1,0 +1,136 @@
+/**
+ * Materi Search Styles
+ * 
+ * @package Websiteku
+ */
+
+/* ========== Search Bar ========== */
+.materi-search {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.search-input-wrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  background: white;
+  border: 2px solid var(--gray-200);
+  border-radius: 50px;
+  padding: 0 20px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.search-input-wrapper:focus-within {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+.search-input-wrapper i.fa-search {
+  color: var(--gray-400);
+  font-size: 1rem;
+}
+
+.search-input-wrapper input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 15px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.search-input-wrapper input::placeholder {
+  color: var(--gray-400);
+}
+
+.search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: var(--gray-200);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--gray-600);
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  background: var(--gray-300);
+  color: var(--gray-800);
+}
+
+.search-count {
+  display: none;
+  margin-top: 10px;
+  color: var(--gray-600);
+  font-size: 0.9rem;
+}
+
+/* No Results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--gray-500);
+}
+
+.no-results i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.no-results p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.no-results button {
+  padding: 10px 25px;
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.no-results button:hover {
+  background: var(--secondary-blue);
+  transform: translateY(-2px);
+}
+
+/* Dark Mode */
+body.dark-mode .search-input-wrapper {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .search-input-wrapper input {
+  color: var(--text-primary);
+}
+
+body.dark-mode .search-clear {
+  background: var(--border-color);
+  color: var(--text-secondary);
+}
+
+body.dark-mode .no-results {
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .search-input-wrapper {
+    max-width: 100%;
+  }
+}

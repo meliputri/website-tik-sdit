@@ -1,0 +1,319 @@
+/**
+ * Quick Features Styles
+ * - Dark Mode
+ * - Back to Top Button
+ * - Print Styles
+ * 
+ * @package Websiteku
+ */
+
+/* ========== Dark Mode Toggle Button ========== */
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+  transform: scale(1.1);
+  background: var(--secondary-blue);
+}
+
+/* ========== Back to Top Button ========== */
+.back-to-top {
+  position: fixed;
+  bottom: 165px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--gray-700);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: var(--primary-green);
+  transform: translateY(-3px);
+}
+
+/* ========== Dark Mode Styles ========== */
+body.dark-mode {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #1f2937;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+}
+
+body.dark-mode {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Header */
+body.dark-mode .site-header {
+  background: rgba(26, 26, 46, 0.95);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark-mode .top-info-bar {
+  background: #0f0f1a;
+}
+
+body.dark-mode .site-logo-text {
+  color: var(--text-primary);
+}
+
+body.dark-mode .main-nav a {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .main-nav a:hover,
+body.dark-mode .main-nav a.active {
+  color: var(--primary-green);
+}
+
+/* Cards */
+body.dark-mode .info-card,
+body.dark-mode .materi-card,
+body.dark-mode .visi-card,
+body.dark-mode .misi-card,
+body.dark-mode .fasilitas-card,
+body.dark-mode .guru-card {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .info-card h3,
+body.dark-mode .materi-card h3 {
+  color: var(--text-primary);
+}
+
+body.dark-mode .info-card p,
+body.dark-mode .materi-card p {
+  color: var(--text-secondary);
+}
+
+/* Sections */
+body.dark-mode .info-mapel,
+body.dark-mode .materi-section {
+  background: var(--bg-primary);
+}
+
+body.dark-mode .section-header h2 {
+  color: var(--text-primary);
+}
+
+body.dark-mode .section-header p {
+  color: var(--text-secondary);
+}
+
+/* Visi Misi & Fasilitas background sections */
+body.dark-mode .visi-misi-section,
+body.dark-mode .guru-section,
+body.dark-mode .map-section {
+  background: var(--bg-secondary);
+}
+
+/* Form elements */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .kontak-form-wrapper {
+  background: var(--bg-secondary);
+}
+
+/* Footer */
+body.dark-mode .site-footer {
+  background: #0f0f1a;
+}
+
+body.dark-mode .site-footer h4 {
+  color: var(--text-primary);
+}
+
+body.dark-mode .site-footer p,
+body.dark-mode .site-footer a {
+  color: var(--text-secondary);
+}
+
+/* Buttons */
+body.dark-mode .btn-outline {
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+body.dark-mode .btn-outline:hover {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+}
+
+/* Badges */
+body.dark-mode .materi-card-badge {
+  background: rgba(46, 125, 50, 0.2);
+}
+
+/* Chatbot */
+body.dark-mode .chatbot-container {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .chatbot-header {
+  background: linear-gradient(135deg, #1a472a, #0d3047);
+}
+
+body.dark-mode .chatbot-messages {
+  background: var(--bg-secondary);
+}
+
+body.dark-mode .chatbot-input-area {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .chatbot-input-area input {
+  background: var(--bg-secondary);
+}
+
+/* ========== Print Styles ========== */
+@media print {
+  /* Hide non-essential elements */
+  .top-info-bar,
+  .site-header,
+  .site-footer,
+  .hero-shapes,
+  .hero-buttons,
+  .chatbot-widget,
+  .chatbot-toggle,
+  .dark-mode-toggle,
+  .back-to-top,
+  .materi-card-actions,
+  .cta-section,
+  .form-note,
+  button,
+  .btn {
+    display: none !important;
+  }
+
+  /* Reset backgrounds */
+  body,
+  .hero,
+  .info-mapel,
+  .materi-section,
+  .visi-misi-section,
+  .fasilitas-section,
+  .guru-section,
+  .page-hero {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Reset text colors */
+  h1, h2, h3, h4, h5, h6,
+  p, li, span, a {
+    color: black !important;
+  }
+
+  /* Cards for print */
+  .info-card,
+  .materi-card,
+  .visi-card,
+  .misi-card,
+  .fasilitas-card,
+  .guru-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure readable font */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  h1 { font-size: 24pt; }
+  h2 { font-size: 18pt; }
+  h3 { font-size: 14pt; }
+
+  /* Hero for print */
+  .hero {
+    padding: 20px 0 !important;
+    min-height: auto !important;
+  }
+
+  .hero-content {
+    text-align: left !important;
+  }
+
+  /* Grid adjustments */
+  .info-grid,
+  .materi-grid,
+  .fasilitas-grid {
+    display: block !important;
+  }
+
+  .info-card,
+  .materi-card,
+  .fasilitas-card {
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+
+  /* Links - show URL */
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #666;
+  }
+
+  /* Page breaks */
+  section {
+    page-break-before: auto;
+  }
+
+  .section-header {
+    page-break-after: avoid;
+  }
+}
