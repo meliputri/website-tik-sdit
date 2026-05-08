@@ -55,10 +55,23 @@ function websiteku_register_settings()
     add_settings_field('school_phone', 'Telepon', 'websiteku_field_text', 'websiteku-settings', 'websiteku_info_section', ['field' => 'school_phone', 'default' => '(021) xxxx-xxxx']);
     add_settings_field('school_email', 'Email', 'websiteku_field_text', 'websiteku-settings', 'websiteku_info_section', ['field' => 'school_email', 'default' => 'info@sditglobalinsanmadani.sch.id']);
 
+    // Visi Misi Section
+    add_settings_section(
+        'websiteku_visimisi_section',
+        '🎯 Visi & Misi',
+        function () {
+            echo '<p>Pengaturan Visi dan Misi sekolah</p>';
+        },
+        'websiteku-settings'
+    );
+
+    add_settings_field('sekolah_visi', 'Visi', 'websiteku_field_textarea', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_visi', 'default' => 'Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.']);
+    add_settings_field('sekolah_misi', 'Misi (Pisahkan dengan baris baru)', 'websiteku_field_textarea', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_misi', 'default' => "Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam\nMengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik\nMembentuk karakter siswa yang berakhlak mulia dan bertanggung jawab\nMembekali siswa dengan keterampilan teknologi informasi yang bermanfaat\nMenciptakan lingkungan belajar yang kondusif, aman, dan nyaman"]);
+
     // Hero Section
     add_settings_section(
         'websiteku_hero_section',
-        '🎯 Hero Section',
+        '🚀 Hero Section',
         function () {
             echo '<p>Pengaturan tampilan hero di halaman utama</p>';
         },
