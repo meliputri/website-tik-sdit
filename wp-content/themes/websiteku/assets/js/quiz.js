@@ -13,6 +13,7 @@
     let currentQuestion = 0;
     let score = 0;
     let answers = [];
+    let studentName = '';
     
     // API base URL - will be set dynamically
     const apiBase = (typeof websiteku_vars !== 'undefined') 
@@ -49,6 +50,12 @@
                             <span><i class="fas fa-list-ol"></i> <strong class="quiz-total-questions">5</strong> Soal</span>
                             <span><i class="fas fa-clock"></i> <strong class="quiz-time-limit">30</strong> detik/soal</span>
                         </div>
+                        
+                        <div class="quiz-name-input" style="margin: 20px 0; text-align: left;">
+                            <label for="student-name" style="display: block; margin-bottom: 5px; font-weight: 600;">Masukkan Nama Kamu:</label>
+                            <input type="text" id="student-name" placeholder="Contoh: Budi Santoso" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                        </div>
+                        
                         <button class="btn btn-primary" onclick="startQuiz()"><i class="fas fa-play"></i> Mulai Quiz</button>
                     </div>
                     
@@ -83,6 +90,11 @@
                             <span class="quiz-score-label">dari 5 soal benar</span>
                         </div>
                         <p class="quiz-result-message"></p>
+                        
+                        <div id="certificate-container" style="display: none; margin: 15px 0;">
+                            <button class="btn" style="background: #FF9800; color: white;" onclick="downloadCertificate()"><i class="fas fa-certificate"></i> Unduh Sertifikat</button>
+                        </div>
+                        
                         <div class="quiz-result-actions">
                             <button class="btn btn-outline" onclick="closeQuiz()">Kembali</button>
                             <button class="btn btn-primary" onclick="retryQuiz()"><i class="fas fa-redo"></i> Ulangi Quiz</button>
@@ -171,6 +183,14 @@
     
     // ========== Start Quiz ==========
     window.startQuiz = function() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        if (!nameInput) {
+            alert('Mohon masukkan nama kamu sebelum memulai quiz!');
+            document.getElementById('student-name').focus();
+            return;
+        }
+        studentName = nameInput;
+        
         hideAllScreens();
         document.getElementById('quiz-question').style.display = 'block';
         showQuestion();
@@ -303,7 +323,43 @@
         document.querySelector('.quiz-score-number').textContent = score;
         document.querySelector('.quiz-score-label').textContent = `dari ${totalQuestions} soal benar`;
         document.querySelector('.quiz-result-message').textContent = message;
+        
+        // Handle Certificate Button
+        const certContainer = document.getElementById('certificate-container');
+        if (percentage >= 80) {
+            certContainer.style.display = 'block';
+        } else {
+            certContainer.style.display = 'none';
+        }
+        
+        // Send score to leaderboard
+        saveScoreToLeaderboard(score * (100 / totalQuestions));
     }
+    
+    function saveScoreToLeaderboard(finalScore) {
+        if (!websitekuN8nConfig || !websitekuN8nConfig.leaderboard_nonce) return;
+        
+        const formData = new FormData();
+        formData.append('action', 'websiteku_save_quiz_score');
+        formData.append('nonce', websitekuN8nConfig.leaderboard_nonce);
+        formData.append('student_name', studentName);
+        formData.append('score', finalScore);
+        formData.append('quiz_id', currentQuiz.id);
+        
+        fetch(websitekuN8nConfig.api_url, {
+            method: 'POST',
+            body: formData
+        }).catch(err => console.error('Error saving score:', err));
+    }
+    
+    // ========== Download Certificate ==========
+    window.downloadCertificate = function() {
+        if (typeof generateCertificate === 'function') {
+            generateCertificate(studentName, currentQuiz.title, websitekuN8nConfig.school_name);
+        } else {
+            alert('Fitur sertifikat sedang tidak tersedia.');
+        }
+    };
     
     // ========== Retry Quiz ==========
     window.retryQuiz = function() {

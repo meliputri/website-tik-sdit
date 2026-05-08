@@ -162,6 +162,249 @@ $social_whatsapp = websiteku_get_option('social_whatsapp', '');
     }
 </style>
 
+<!-- Leaderboard Floating Button -->
+<button class="leaderboard-toggle" onclick="toggleLeaderboard()">
+    <i class="fas fa-trophy"></i>
+    <span>Papan Peringkat</span>
+</button>
+
+<!-- Leaderboard Modal -->
+<div id="leaderboard-modal" class="leaderboard-modal">
+    <div class="leaderboard-content">
+        <button class="leaderboard-close" onclick="toggleLeaderboard()">&times;</button>
+        <div class="leaderboard-header">
+            <i class="fas fa-trophy" style="font-size: 3rem; color: #FFD700; margin-bottom: 15px;"></i>
+            <h2>Papan Peringkat TIK</h2>
+            <p>10 Siswa dengan Nilai Tertinggi</p>
+        </div>
+        <div class="leaderboard-body" id="leaderboard-list">
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Memuat data...
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Leaderboard Toggle Button */
+    .leaderboard-toggle {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        background: linear-gradient(135deg, #FF9800, #F57C00);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .leaderboard-toggle:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.6);
+    }
+
+    /* Leaderboard Modal */
+    .leaderboard-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .leaderboard-modal.active {
+        display: flex;
+    }
+
+    .leaderboard-content {
+        background: white;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 20px;
+        padding: 30px;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .leaderboard-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: #999;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .leaderboard-close:hover {
+        color: #e74c3c;
+    }
+
+    .leaderboard-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px dashed #eee;
+    }
+
+    .leaderboard-header h2 {
+        color: #333;
+        margin: 0 0 5px 0;
+    }
+
+    .leaderboard-header p {
+        color: #666;
+        margin: 0;
+    }
+
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        transition: transform 0.2s;
+    }
+
+    .leaderboard-item:hover {
+        transform: translateX(5px);
+        background: #fff3e0;
+    }
+
+    .leaderboard-rank {
+        width: 40px;
+        height: 40px;
+        background: #e0e0e0;
+        color: #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        margin-right: 15px;
+    }
+
+    .leaderboard-item.rank-1 .leaderboard-rank {
+        background: #FFD700;
+        color: #b8860b;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .leaderboard-item.rank-2 .leaderboard-rank {
+        background: #C0C0C0;
+        color: #696969;
+    }
+
+    .leaderboard-item.rank-3 .leaderboard-rank {
+        background: #CD7F32;
+        color: #8b4513;
+    }
+
+    .leaderboard-info {
+        flex-grow: 1;
+    }
+
+    .leaderboard-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 3px;
+        display: block;
+    }
+
+    .leaderboard-date {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .leaderboard-score {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2E7D32;
+    }
+    
+    @media (max-width: 768px) {
+        .leaderboard-toggle span {
+            display: none;
+        }
+        .leaderboard-toggle {
+            padding: 15px;
+            border-radius: 50%;
+            bottom: 80px; /* Above mobile nav if any */
+        }
+    }
+</style>
+
+<script>
+    function toggleLeaderboard() {
+        const modal = document.getElementById('leaderboard-modal');
+        if (modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        } else {
+            modal.classList.add('active');
+            fetchLeaderboard();
+        }
+    }
+
+    function fetchLeaderboard() {
+        if (!websitekuN8nConfig || !websitekuN8nConfig.api_url) return;
+        
+        const listContainer = document.getElementById('leaderboard-list');
+        listContainer.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>';
+
+        fetch(websitekuN8nConfig.api_url + '?action=websiteku_get_leaderboard')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data && data.data.length > 0) {
+                    let html = '';
+                    data.data.forEach((item, index) => {
+                        const rank = index + 1;
+                        // Format date simple
+                        const dateObj = new Date(item.date);
+                        const dateStr = dateObj.toLocaleDateString('id-ID', {day: 'numeric', month: 'short'});
+                        
+                        html += `
+                            <div class="leaderboard-item rank-${rank}">
+                                <div class="leaderboard-rank">${rank}</div>
+                                <div class="leaderboard-info">
+                                    <span class="leaderboard-name">${item.name || 'Anonim'}</span>
+                                    <span class="leaderboard-date">${dateStr}</span>
+                                </div>
+                                <div class="leaderboard-score">${item.score}</div>
+                            </div>
+                        `;
+                    });
+                    listContainer.innerHTML = html;
+                } else {
+                    listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">Belum ada data nilai kuis. Jadilah yang pertama!</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                listContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #e74c3c;">Gagal memuat papan peringkat.</div>';
+            });
+    }
+</script>
+
 <?php wp_footer(); ?>
 </body>
 

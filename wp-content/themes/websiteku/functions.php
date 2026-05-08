@@ -124,6 +124,8 @@ function websiteku_scripts()
         'timeout' => 30000, // 30 seconds timeout for AI response
         'api_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('websiteku_chatbot_n8n'),
+        'school_name' => websiteku_get_option('school_name', 'SDIT Global Insan Madani'),
+        'leaderboard_nonce' => wp_create_nonce('websiteku_leaderboard_nonce'),
     );
     wp_localize_script('websiteku-chatbot', 'websitekuN8nConfig', $n8n_config);
 
@@ -149,6 +151,15 @@ function websiteku_scripts()
         'websiteku-quiz',
         get_template_directory_uri() . '/assets/js/quiz.js',
         array('websiteku-quiz-data'),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
+    // Certificate script
+    wp_enqueue_script(
+        'websiteku-certificate',
+        get_template_directory_uri() . '/assets/js/certificate.js',
+        array(),
         wp_get_theme()->get('Version'),
         true
     );
@@ -385,3 +396,48 @@ function websiteku_chatbot_n8n_proxy()
 }
 add_action('wp_ajax_websiteku_chatbot_n8n', 'websiteku_chatbot_n8n_proxy');
 add_action('wp_ajax_nopriv_websiteku_chatbot_n8n', 'websiteku_chatbot_n8n_proxy'); // Allow non-logged in users
+
+/**
+ * Leaderboard AJAX Handlers
+ */
+function websiteku_save_quiz_score() {
+    check_ajax_referer('websiteku_leaderboard_nonce', 'nonce');
+    
+    $student_name = isset($_POST['student_name']) ? sanitize_text_field($_POST['student_name']) : 'Anonim';
+    $score = isset($_POST['score']) ? intval($_POST['score']) : 0;
+    $quiz_id = isset($_POST['quiz_id']) ? sanitize_text_field($_POST['quiz_id']) : '';
+    
+    $leaderboard = get_option('websiteku_leaderboard', array());
+    
+    // Add new score
+    $leaderboard[] = array(
+        'name' => $student_name,
+        'score' => $score,
+        'quiz_id' => $quiz_id,
+        'date' => current_time('mysql')
+    );
+    
+    // Sort descending by score
+    usort($leaderboard, function($a, $b) {
+        return $b['score'] - $a['score'];
+    });
+    
+    // Keep top 100 to prevent db bloat
+    if (count($leaderboard) > 100) {
+        $leaderboard = array_slice($leaderboard, 0, 100);
+    }
+    
+    update_option('websiteku_leaderboard', $leaderboard);
+    wp_send_json_success('Score saved successfully');
+}
+add_action('wp_ajax_websiteku_save_quiz_score', 'websiteku_save_quiz_score');
+add_action('wp_ajax_nopriv_websiteku_save_quiz_score', 'websiteku_save_quiz_score');
+
+function websiteku_get_leaderboard() {
+    $leaderboard = get_option('websiteku_leaderboard', array());
+    // Get top 10
+    $top_10 = array_slice($leaderboard, 0, 10);
+    wp_send_json_success($top_10);
+}
+add_action('wp_ajax_websiteku_get_leaderboard', 'websiteku_get_leaderboard');
+add_action('wp_ajax_nopriv_websiteku_get_leaderboard', 'websiteku_get_leaderboard');
