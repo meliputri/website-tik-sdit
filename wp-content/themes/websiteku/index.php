@@ -84,6 +84,38 @@ $hero_subtitle = websiteku_get_option('hero_subtitle', 'Selamat datang di portal
     </div>
 </section>
 
+<!-- Visi Misi Section -->
+<section class="visi-misi-section" style="background: var(--gray-50); padding: 60px 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Visi & Misi Sekolah</h2>
+            <p>Arah dan tujuan SDIT Global Insan Madani</p>
+        </div>
+        <?php
+        $visi = websiteku_get_option('sekolah_visi', 'Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.');
+        $misi = websiteku_get_option('sekolah_misi', "Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam\nMengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik\nMembentuk karakter siswa yang berakhlak mulia dan bertanggung jawab\nMembekali siswa dengan keterampilan teknologi informasi yang bermanfaat\nMenciptakan lingkungan belajar yang kondusif, aman, dan nyaman");
+
+        $misi_array = array_filter(array_map('trim', explode("\n", $misi)));
+        ?>
+        <div class="visi-misi-grid">
+            <div class="visi-card">
+                <div class="visi-card-icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Visi</h3>
+                <p><?php echo nl2br(esc_html($visi)); ?></p>
+            </div>
+            <div class="misi-card">
+                <div class="misi-card-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Misi</h3>
+                <ul>
+                    <?php foreach ($misi_array as $item): ?>
+                        <li><?php echo esc_html($item); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Materi Section -->
 <section class="materi-section" id="materi">
     <div class="container">
@@ -215,5 +247,51 @@ $hero_subtitle = websiteku_get_option('hero_subtitle', 'Selamat datang di portal
         <button class="btn" onclick="openChatbot()"><i class="fas fa-robot"></i> Buka Chatbot</button>
     </div>
 </section>
+
+<style>
+    /* Visi Misi Styles (for Home) */
+    .visi-misi-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .visi-card,
+    .misi-card {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .visi-card-icon,
+    .misi-card-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: var(--primary-green);
+    }
+
+    .visi-card h3,
+    .misi-card h3 {
+        color: var(--primary-green);
+        margin-bottom: 15px;
+    }
+
+    .misi-card ul {
+        list-style: disc;
+        padding-left: 20px;
+    }
+
+    .misi-card ul li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .visi-misi-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 <?php get_footer(); ?>
