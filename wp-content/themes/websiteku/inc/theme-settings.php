@@ -65,8 +65,8 @@ function websiteku_register_settings()
         'websiteku-settings'
     );
 
-    add_settings_field('sekolah_visi', 'Visi', 'websiteku_field_textarea', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_visi', 'default' => 'Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.']);
-    add_settings_field('sekolah_misi', 'Misi (Pisahkan dengan baris baru)', 'websiteku_field_textarea', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_misi', 'default' => "Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam\nMengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik\nMembentuk karakter siswa yang berakhlak mulia dan bertanggung jawab\nMembekali siswa dengan keterampilan teknologi informasi yang bermanfaat\nMenciptakan lingkungan belajar yang kondusif, aman, dan nyaman"]);
+    add_settings_field('sekolah_visi', 'Visi', 'websiteku_field_wysiwyg', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_visi', 'default' => 'Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.']);
+    add_settings_field('sekolah_misi', 'Misi', 'websiteku_field_wysiwyg', 'websiteku-settings', 'websiteku_visimisi_section', ['field' => 'sekolah_misi', 'default' => "<ul><li>Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam</li><li>Mengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik</li><li>Membentuk karakter siswa yang berakhlak mulia dan bertanggung jawab</li><li>Membekali siswa dengan keterampilan teknologi informasi yang bermanfaat</li><li>Menciptakan lingkungan belajar yang kondusif, aman, dan nyaman</li></ul>"]);
 
     // Hero Section
     add_settings_section(
@@ -184,6 +184,21 @@ function websiteku_field_textarea($args)
     $options = get_option('websiteku_options', []);
     $value = isset($options[$args['field']]) ? $options[$args['field']] : ($args['default'] ?? '');
     echo '<textarea name="websiteku_options[' . esc_attr($args['field']) . ']" rows="3" class="large-text">' . esc_textarea($value) . '</textarea>';
+}
+
+function websiteku_field_wysiwyg($args)
+{
+    $options = get_option('websiteku_options', []);
+    $value = isset($options[$args['field']]) ? $options[$args['field']] : ($args['default'] ?? '');
+    wp_editor($value, $args['field'], array(
+        'textarea_name' => 'websiteku_options[' . esc_attr($args['field']) . ']',
+        'textarea_rows' => 5,
+        'media_buttons' => false,
+        'tinymce' => array(
+            'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink,undo,redo'
+        ),
+        'quicktags' => true
+    ));
 }
 
 function websiteku_field_url($args)
@@ -355,6 +370,8 @@ function websiteku_sanitize_options($input)
                     'frameborder' => true,
                 )
             ));
+        } elseif ($key === 'sekolah_visi' || $key === 'sekolah_misi') {
+            $sanitized[$key] = wp_kses_post($value);
         } elseif ($key === 'n8n_enabled') {
             $sanitized[$key] = $value === '1' ? '1' : '0';
         } elseif ($key === 'n8n_timeout') {

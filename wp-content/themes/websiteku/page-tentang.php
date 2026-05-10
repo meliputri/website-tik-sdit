@@ -51,28 +51,22 @@ get_header();
     <!-- Visi Misi -->
     <section class="visi-misi-section">
         <div class="container">
-            <?php
-            $visi = websiteku_get_option('sekolah_visi', 'Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.');
-            $misi = websiteku_get_option('sekolah_misi', "Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam\nMengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik\nMembentuk karakter siswa yang berakhlak mulia dan bertanggung jawab\nMembekali siswa dengan keterampilan teknologi informasi yang bermanfaat\nMenciptakan lingkungan belajar yang kondusif, aman, dan nyaman");
-
-            $misi_array = array_filter(array_map('trim', explode("\n", $misi)));
-            ?>
-            <div class="visi-misi-grid">
-                <div class="visi-card">
-                    <div class="visi-card-icon"><i class="fas fa-bullseye"></i></div>
-                    <h3>Visi</h3>
-                    <p><?php echo nl2br(esc_html($visi)); ?></p>
-                </div>
-                <div class="misi-card">
-                    <div class="misi-card-icon"><i class="fas fa-rocket"></i></div>
-                    <h3>Misi</h3>
-                    <ul>
-                        <?php foreach ($misi_array as $item): ?>
-                            <li><?php echo esc_html($item); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+        <?php
+        $visi = websiteku_get_option('sekolah_visi', '<p>Menjadi lembaga pendidikan Islam terpadu yang unggul dalam IMTAQ dan IPTEK, menghasilkan generasi yang berakhlak mulia, cerdas, mandiri, dan berwawasan global.</p>');
+        $misi = websiteku_get_option('sekolah_misi', "<ul><li>Menyelenggarakan pendidikan yang mengintegrasikan ilmu pengetahuan dan nilai-nilai Islam</li><li>Mengembangkan potensi siswa secara optimal dalam bidang akademik dan non-akademik</li><li>Membentuk karakter siswa yang berakhlak mulia dan bertanggung jawab</li><li>Membekali siswa dengan keterampilan teknologi informasi yang bermanfaat</li><li>Menciptakan lingkungan belajar yang kondusif, aman, dan nyaman</li></ul>");
+        ?>
+        <div class="visi-misi-grid">
+            <div class="visi-card">
+                <div class="visi-card-icon"><i class="fas fa-bullseye"></i></div>
+                <h3>Visi</h3>
+                <div class="visi-content"><?php echo wp_kses_post($visi); ?></div>
             </div>
+            <div class="misi-card">
+                <div class="misi-card-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Misi</h3>
+                <div class="misi-content"><?php echo wp_kses_post($misi); ?></div>
+            </div>
+        </div>
         </div>
     </section>
 
