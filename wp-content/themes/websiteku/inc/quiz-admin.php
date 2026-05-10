@@ -467,7 +467,7 @@ function websiteku_get_quiz_by_id($quiz_id)
  */
 function websiteku_register_quiz_api()
 {
-    register_rest_route('websiteku/v1', '/quiz/(?P<id>[a-zA-Z0-9-]+)', array(
+    register_rest_route('websiteku/v1', '/quiz/(?P<id>[^/]+)', array(
         'methods' => 'GET',
         'callback' => 'websiteku_get_quiz_api',
         'permission_callback' => '__return_true'
