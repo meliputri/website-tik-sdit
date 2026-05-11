@@ -477,7 +477,7 @@ add_action('rest_api_init', 'websiteku_register_quiz_api');
 
 function websiteku_get_quiz_api($request)
 {
-    $quiz_id = $request['id'];
+    $quiz_id = urldecode($request['id']);
     $quiz = websiteku_get_quiz_by_id($quiz_id);
 
     if (!$quiz) {

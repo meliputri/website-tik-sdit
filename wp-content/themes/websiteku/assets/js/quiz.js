@@ -117,7 +117,7 @@
         
         try {
             // Try to fetch from REST API first
-            const response = await fetch(apiBase + quizId);
+            const response = await fetch(apiBase + encodeURIComponent(quizId));
             
             if (response.ok) {
                 const quizData = await response.json();
