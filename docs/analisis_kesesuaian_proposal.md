@@ -1,5 +1,6 @@
 # Analisis Kesesuaian Website dengan Proposal Skripsi
-**Judul:** Pengembangan Chatbot AI Pembelajaran TIK Berbasis Framework RAG di SDIT Global Insan Madani
+**Judul:** Pengembangan Chatbot AI Pembelajaran TIK Berbasis Framework RAG di SDIT Global Insan Madani  
+**Versi tema:** 1.2.0 (pembaruan proposal)
 
 ---
 
@@ -19,97 +20,56 @@
 ### 2. Fitur Website
 | Fitur Proposal | Status | Keterangan |
 |---|---|---|
-| Halaman Beranda | ✅ | `index.php` dengan Hero, Info Mapel, Materi |
-| Halaman Materi TIK | ✅ | CPT Materi, tampil di beranda |
-| Halaman Tentang | ✅ | `page-tentang.php` |
-| Halaman Kontak | ✅ | `page-kontak.php` |
-| Chatbot floating di website | ✅ | `chatbot.js`, muncul di semua halaman |
-| Chatbot terima pertanyaan & beri jawaban | ✅ | Terhubung ke n8n RAG |
-| Admin dapat kelola materi | ✅ | WP-Admin + CPT Materi TIK |
-| Akses via browser tanpa instalasi | ✅ | Website-based |
+| Halaman Beranda | ✅ | `index.php` |
+| Halaman Materi TIK | ✅ | Arsip **`/materi/`** (`archive-materi.php`) + beranda |
+| Halaman Tentang / Kontak | ✅ | Template halaman |
+| Chatbot floating | ✅ | Semua halaman publik |
+| Admin kelola materi | ✅ | CPT + kelas, TP, video |
+| Akses via browser | ✅ | Website-based |
 
 ### 3. Fitur Chatbot
 | Fitur | Status | Keterangan |
 |---|---|---|
-| Input pertanyaan pengguna | ✅ | Input field chatbot |
-| Respons berbasis materi TIK | ✅ | via n8n RAG + Gemini |
-| Fallback rule-based | ✅ | `chatbot-data.js` jika n8n mati |
-| Chat memory / session | ✅ | Cookie session ID dikirim ke n8n |
-| Buka n8n di tab baru | ✅ | Tombol external link di header chatbot |
+| Input pertanyaan & jawaban | ✅ | n8n RAG + rule-based |
+| Respons berbasis materi TIK | ✅ | Konteks materi + dataset RAG |
+| Fallback rule-based | ✅ | `chatbot-data.js` + CPT Q&A |
+| Chat memory / session | ✅ | Cookie → n8n |
+| **Log interaksi ke MySQL** | ✅ | Tabel `wp_websiteku_chat_logs` |
+| Pilih kelas di chatbot | ✅ | Filter jawaban per kelas |
 
 ### 4. Admin Panel
 | Fitur | Status | Keterangan |
 |---|---|---|
-| Pengaturan tema (logo, sosmed, dll) | ✅ | `theme-settings.php` |
-| CRUD Materi TIK | ✅ | Custom Post Type + Meta Box |
-| CRUD Quiz TIK | ✅ | `quiz-admin.php` |
-| Setting n8n (URL + toggle aktif) | ✅ | Di halaman Pengaturan Tema |
+| Pengaturan tema | ✅ | Logo, n8n, sosmed |
+| CRUD Materi / Quiz / Q&A | ✅ | |
+| **Upload dataset RAG** | ✅ | Pengaturan Tema → **Dataset RAG** |
+| **Impor materi contoh** | ✅ | Materi TIK → **Impor Materi Contoh** |
+| **Log percakapan** | ✅ | Chatbot Q&A → **Log Percakapan** |
+| **Status pengujian** | ✅ | Pengaturan Tema → **Status Pengujian** |
 
 ---
 
-## ⚠️ Perlu Diperbaiki / Disesuaikan
+## ⚠️ Tindakan untuk Skripsi (bukan kode)
 
-### 1. Konten Belum Diisi
-> Materi TIK di WP-Admin kemungkinan **belum diisi** sehingga halaman tampil kosong atau fallback ke default hardcoded.
-
-**Aksi:** Buat minimal 5-6 materi TIK di WP-Admin > Materi TIK
-
-### 2. XAMPP vs Laragon
-> Proposal menyebut XAMPP, implementasi pakai Laragon.
-
-**Opsi:**
-- Ubah di BAB III/IV: sebutkan Laragon sebagai pengganti XAMPP
-- Atau ganti Laragon ke XAMPP agar sesuai proposal
-
-### 3. MySQL sebagai penyimpan interaksi chatbot
-> Proposal BAB IV menyebut *"MySQL untuk menyimpan interaksi antara pengguna dan chatbot"*
-
-**Status:** ❌ Belum ada. Saat ini riwayat chat hanya di memory browser & Postgres n8n.
-
-**Aksi (opsional):** Simpan log percakapan ke DB WordPress jika ingin sesuai proposal.
-
-### 4. Use Case Diagram & Flowchart
-> Di BAB IV ada placeholder untuk diagram UML.
-
-**Status:** Perlu dilengkapi di dokumen skripsi (bukan di website).
+| Item | Status | Aksi |
+|---|---|---|
+| XAMPP vs Laragon | ⚠️ | Satu paragraf di BAB III |
+| Diagram UML di PDF skripsi | ⚠️ | Salin dari `docs/diagram_skripsi_bab3_4.md` |
+| Screenshot blackbox | ⚠️ | Jalankan skenario + lampirkan di BAB IV |
+| Sinkron RAG n8n | ⚠️ | Setelah upload dataset, jalankan workflow embedding |
 
 ---
 
-## ❌ Belum Ada di Website
+## 📋 Langkah Cepat Setelah Update
 
-| Komponen Proposal | Keterangan |
-|---|---|
-| Halaman khusus Materi (terpisah) | Saat ini materi ada di beranda, bukan halaman `/materi` tersendiri |
-| Fitur input kosong → tampil peringatan | Perlu dicek, belum diverifikasi |
-| Upload dataset chatbot dari Admin | Admin tidak bisa upload dokumen langsung dari WP-Admin |
-
----
-
-## 📋 Prioritas Pekerjaan
-
-### 🔴 Kritis (Harus segera)
-1. **Isi konten materi TIK di WP-Admin** (minimal 5-6 materi)
-2. **Pastikan materi muncul di halaman utama** (sudah diperbaiki dengan fallback)
-3. **Pastikan quiz bisa dimainkan** (klik tombol Quiz di materi)
-
-### 🟡 Penting (Sebelum sidang)
-4. Sesuaikan keterangan XAMPP → Laragon di dokumen skripsi
-5. Lengkapi diagram UML di dokumen (Use Case, Flowchart)
-6. Screenshot semua halaman untuk BAB IV
-7. Jalankan Black Box Testing sesuai Tabel 3.4
-
-### 🟢 Opsional
-8. Buat halaman `/materi` tersendiri
-9. Simpan log chat ke database WordPress
-10. Fitur validasi input kosong di chatbot
+1. **WP-Admin → Materi TIK → Impor Materi Contoh** (8 materi + TP + video)
+2. **Pengaturan → Tautan Permanen → Simpan** (aktifkan `/materi/`)
+3. Uji chatbot di frontend → cek **Log Percakapan**
+4. Upload PDF materi di **Dataset RAG**
+5. Buka **Status Pengujian** → pastikan checklist hijau untuk screenshot
 
 ---
 
 ## Kesimpulan
 
-**Website sudah ~80% sesuai proposal.**
-
-Fitur utama (WordPress + Chatbot AI + RAG + n8n + Gemini) sudah berjalan. Yang belum adalah:
-- Konten materi belum diisi
-- Beberapa detail teknis kecil
-- Dokumentasi (screenshot, diagram) untuk dokumen skripsi
+**Website ~95% sesuai proposal** setelah log MySQL, halaman `/materi/`, upload dataset RAG, dan impor materi contoh. Sisanya dokumentasi naskah (diagram, screenshot, blackbox).

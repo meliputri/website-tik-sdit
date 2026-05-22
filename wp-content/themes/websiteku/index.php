@@ -110,66 +110,7 @@ $hero_subtitle = websiteku_get_option('hero_subtitle', 'Selamat datang di portal
     </div>
 </section>
 
-<!-- Materi Section -->
-<section class="materi-section" id="materi">
-    <div class="container">
-        <div class="section-header">
-            <h2>Materi Pembelajaran TIK</h2>
-            <p>Materi disusun per kelas sesuai <strong>Tujuan Pembelajaran (TP)</strong> dan dilengkapi video animasi</p>
-        </div>
-
-        <!-- Filter Kelas -->
-        <div class="materi-kelas-filter" id="materi-kelas-filter" role="tablist">
-            <button type="button" class="kelas-tab active" data-kelas="all" role="tab">Semua Kelas</button>
-            <?php foreach (websiteku_get_kelas_options() as $val => $label): ?>
-                <button type="button" class="kelas-tab" data-kelas="<?php echo esc_attr($val); ?>" role="tab">
-                    <?php echo esc_html($label); ?>
-                </button>
-            <?php endforeach; ?>
-        </div>
-
-        <!-- TP ringkas kelas terpilih -->
-        <div class="materi-tp-kelas-info" id="materi-tp-kelas-info" aria-live="polite"></div>
-
-        <!-- Search Bar -->
-        <div class="materi-search">
-            <div class="search-input-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="text" id="materi-search-input" placeholder="Cari materi, TP, atau bab..." autocomplete="off">
-                <button type="button" id="materi-search-clear" class="search-clear" style="display: none;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="materi-search-count" class="search-count"></div>
-        </div>
-
-        <div class="materi-grid" id="materi-grid">
-            <?php
-            $materi_items = websiteku_get_materi_items();
-            if (!empty($materi_items)):
-                foreach ($materi_items as $materi):
-                    include locate_template('template-parts/materi-card.php');
-                endforeach;
-            else:
-                foreach (websiteku_get_default_materi_samples() as $materi):
-                    include locate_template('template-parts/materi-card.php');
-                endforeach;
-                ?>
-                <p class="materi-sample-notice"><i class="fas fa-info-circle"></i> Contoh materi per kelas. Tambahkan materi lengkap di <strong>WP-Admin → Materi TIK</strong> beserta TP dan URL video YouTube/Vimeo.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-</section>
-
-<!-- Modal Video -->
-<div id="materi-video-modal" class="materi-video-modal" aria-hidden="true">
-    <div class="materi-video-modal-backdrop"></div>
-    <div class="materi-video-modal-content">
-        <button type="button" class="materi-video-close" aria-label="Tutup">&times;</button>
-        <h3 id="materi-video-modal-title"></h3>
-        <div id="materi-video-modal-embed"></div>
-    </div>
-</div>
+<?php get_template_part('template-parts/materi', 'section'); ?>
 
 <!-- CTA Section -->
 <section class="cta-section">

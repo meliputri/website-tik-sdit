@@ -71,7 +71,7 @@
                     <ul>
                         <li><a href="<?php echo esc_url(home_url('/')); ?>"
                                 class="<?php echo is_front_page() ? 'active' : ''; ?>">Beranda</a></li>
-                        <li><a href="#materi">Materi</a></li>
+                        <li><a href="<?php echo esc_url(get_post_type_archive_link('materi') ?: home_url('/#materi')); ?>">Materi</a></li>
                         <li><a href="#tentang">Tentang</a></li>
                         <li><a href="#kontak">Kontak</a></li>
                     </ul>

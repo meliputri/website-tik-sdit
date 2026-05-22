@@ -25,6 +25,21 @@ require_once get_template_directory() . '/inc/chatbot-admin.php';
 // Include Quiz Admin
 require_once get_template_directory() . '/inc/quiz-admin.php';
 
+require_once get_template_directory() . '/inc/chatbot-logs.php';
+require_once get_template_directory() . '/inc/materi-seed.php';
+require_once get_template_directory() . '/inc/rag-dataset-admin.php';
+require_once get_template_directory() . '/inc/system-check.php';
+
+/**
+ * Flush rewrite rules untuk arsip /materi/
+ */
+function websiteku_flush_rewrite_rules()
+{
+    websiteku_register_materi_cpt();
+    flush_rewrite_rules();
+}
+add_action('after_switch_theme', 'websiteku_flush_rewrite_rules');
+
 /**
  * Theme Setup
  */
@@ -147,6 +162,7 @@ function websiteku_scripts()
         'nonce' => wp_create_nonce('websiteku_chatbot_n8n'),
         'school_name' => websiteku_get_option('school_name', 'SDIT Global Insan Madani'),
         'leaderboard_nonce' => wp_create_nonce('websiteku_leaderboard_nonce'),
+        'chat_log_nonce' => wp_create_nonce('websiteku_chat_log'),
         'kelas_options' => websiteku_get_kelas_options(),
     );
     wp_localize_script('websiteku-chatbot', 'websitekuN8nConfig', $n8n_config);
@@ -432,8 +448,16 @@ function websiteku_chatbot_n8n_proxy()
     }
 
     if ($answer) {
+        websiteku_save_chat_log(
+            $session_id,
+            $user_kelas > 0 ? (string) $user_kelas : '',
+            $user_message,
+            is_string($answer) ? $answer : wp_json_encode($answer),
+            'n8n'
+        );
         wp_send_json_success(array(
-            'answer' => $answer
+            'answer' => $answer,
+            'logged' => true,
         ));
     } else {
         error_log('n8n Unknown Response Format: ' . $response_body);

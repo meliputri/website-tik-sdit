@@ -53,6 +53,29 @@
         return null;
     }
 
+    function logChatInteraction(userMessage, botAnswer, source) {
+        if (!userMessage || !botAnswer || typeof websitekuN8nConfig === 'undefined') {
+            return;
+        }
+        if (!websitekuN8nConfig.chat_log_nonce || !websitekuN8nConfig.api_url) {
+            return;
+        }
+        const formData = new FormData();
+        formData.append('action', 'websiteku_log_chat');
+        formData.append('nonce', websitekuN8nConfig.chat_log_nonce);
+        formData.append('message', userMessage);
+        formData.append('answer', botAnswer);
+        formData.append('source', source || 'rule');
+        formData.append('kelas', getSelectedKelas());
+        fetch(websitekuN8nConfig.api_url, { method: 'POST', body: formData }).catch(function () {});
+    }
+
+    function detectResponseSource(message) {
+        if (getTpKelasResponse(message)) return 'tp';
+        if (findMateriResponse(message)) return 'materi';
+        return 'rule';
+    }
+
     function getTpKelasResponse(message) {
         const msg = message.toLowerCase();
         const kelasMatch = msg.match(/kelas\s*(\d)/) || msg.match(/kls\s*(\d)/) || msg.match(/tp\s*kelas\s*(\d)/);
@@ -207,7 +230,10 @@
         function sendMessage(customMessage) {
             const message = customMessage || input.value.trim();
             
-            if (message === '') return;
+            if (message === '') {
+                addMessage('Silakan ketik pertanyaan terlebih dahulu. 😊', 'bot');
+                return;
+            }
             
             // Hide suggestions after first message
             const suggestions = document.getElementById('chatbot-suggestions');
@@ -227,17 +253,22 @@
             if (typeof websitekuN8nConfig !== 'undefined' && websitekuN8nConfig.enabled) {
                 // Use callback for async n8n response
                 setTimeout(function() {
-                    getBotResponse(message, function(response) {
+                    getBotResponse(message, function(response, source) {
                         removeTyping(typingId);
                         addMessage(response, 'bot');
+                        if (source !== 'n8n') {
+                            logChatInteraction(message, response, source || 'fallback');
+                        }
                     });
                 }, 800 + Math.random() * 500);
             } else {
-                // Use synchronous rule-based response
                 setTimeout(function() {
                     removeTyping(typingId);
-                    const response = getRuleBasedResponse(message.toLowerCase().trim());
+                    const msgLower = message.toLowerCase().trim();
+                    const response = getRuleBasedResponse(msgLower);
+                    const source = detectResponseSource(msgLower);
                     addMessage(response, 'bot');
+                    logChatInteraction(message, response, source);
                 }, 800 + Math.random() * 500);
             }
         }
@@ -290,18 +321,16 @@
                 // Try n8n first
                 fetchN8nResponse(userMessage, function(n8nAnswer) {
                     if (n8nAnswer) {
-                        callback(n8nAnswer);
+                        callback(n8nAnswer, 'n8n');
                     } else {
-                        // Fallback to rule-based
                         const ruleBasedAnswer = getRuleBasedResponse(message);
-                        callback(ruleBasedAnswer);
+                        callback(ruleBasedAnswer, detectResponseSource(message));
                     }
                 });
             } else {
-                // Use rule-based directly
                 const answer = getRuleBasedResponse(message);
                 if (callback) {
-                    callback(answer);
+                    callback(answer, detectResponseSource(message));
                 } else {
                     return answer;
                 }
@@ -343,7 +372,7 @@
                     callback(null);
                 } else if (result.success && result.data && result.data.answer) {
                     console.log('✅ n8n response received:', result.data.answer);
-                    callback(result.data.answer);
+                    callback(result.data.answer, 'n8n');
                 } else {
                     // Log detailed error for debugging
                     const errorMsg = result.data ? result.data.message : 'Unknown error';
