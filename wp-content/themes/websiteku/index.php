@@ -114,15 +114,28 @@ $hero_subtitle = websiteku_get_option('hero_subtitle', 'Selamat datang di portal
 <section class="materi-section" id="materi">
     <div class="container">
         <div class="section-header">
-            <h2>Materi Pembelajaran</h2>
-            <p>Daftar materi TIK yang akan kamu pelajari</p>
+            <h2>Materi Pembelajaran TIK</h2>
+            <p>Materi disusun per kelas sesuai <strong>Tujuan Pembelajaran (TP)</strong> dan dilengkapi video animasi</p>
         </div>
+
+        <!-- Filter Kelas -->
+        <div class="materi-kelas-filter" id="materi-kelas-filter" role="tablist">
+            <button type="button" class="kelas-tab active" data-kelas="all" role="tab">Semua Kelas</button>
+            <?php foreach (websiteku_get_kelas_options() as $val => $label): ?>
+                <button type="button" class="kelas-tab" data-kelas="<?php echo esc_attr($val); ?>" role="tab">
+                    <?php echo esc_html($label); ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- TP ringkas kelas terpilih -->
+        <div class="materi-tp-kelas-info" id="materi-tp-kelas-info" aria-live="polite"></div>
 
         <!-- Search Bar -->
         <div class="materi-search">
             <div class="search-input-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="materi-search-input" placeholder="Cari materi..." autocomplete="off">
+                <input type="text" id="materi-search-input" placeholder="Cari materi, TP, atau bab..." autocomplete="off">
                 <button type="button" id="materi-search-clear" class="search-clear" style="display: none;">
                     <i class="fas fa-times"></i>
                 </button>
@@ -132,106 +145,31 @@ $hero_subtitle = websiteku_get_option('hero_subtitle', 'Selamat datang di portal
 
         <div class="materi-grid" id="materi-grid">
             <?php
-            // Get materi from Custom Post Type
-            $materi_query = websiteku_get_materi();
-
-            if ($materi_query->have_posts()):
-                while ($materi_query->have_posts()):
-                    $materi_query->the_post();
-                    $bab = get_post_meta(get_the_ID(), '_materi_bab', true);
-                    $icon = get_post_meta(get_the_ID(), '_materi_icon', true) ?: 'fa-book';
-                    $quiz_id = get_post_meta(get_the_ID(), '_materi_quiz_id', true);
-                    $pdf_url = get_post_meta(get_the_ID(), '_materi_pdf_url', true);
-                    ?>
-                    <article class="materi-card">
-                        <div class="materi-card-image"><i class="fas <?php echo esc_attr($icon); ?>"></i></div>
-                        <div class="materi-card-content">
-                            <span class="materi-card-badge">Bab <?php echo esc_html($bab); ?></span>
-                            <h3><?php the_title(); ?></h3>
-                            <p><?php echo wp_trim_words(get_the_excerpt(), 20); ?></p>
-                            <div class="materi-card-actions">
-                                <?php if ($pdf_url): ?>
-                                    <a href="<?php echo esc_url($pdf_url); ?>" class="btn btn-outline" download>
-                                        <i class="fas fa-download"></i> Download PDF
-                                    </a>
-                                <?php else: ?>
-                                    <button class="btn btn-outline" disabled><i class="fas fa-download"></i> PDF Belum Ada</button>
-                                <?php endif; ?>
-
-                                <?php if ($quiz_id): ?>
-                                    <button class="btn btn-primary" onclick="openQuiz('<?php echo esc_js($quiz_id); ?>')"><i
-                                            class="fas fa-pen"></i> Quiz</button>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary" disabled><i class="fas fa-clock"></i> Segera</button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </article>
-                    <?php
-                endwhile;
-                wp_reset_postdata();
+            $materi_items = websiteku_get_materi_items();
+            if (!empty($materi_items)):
+                foreach ($materi_items as $materi):
+                    include locate_template('template-parts/materi-card.php');
+                endforeach;
             else:
+                foreach (websiteku_get_default_materi_samples() as $materi):
+                    include locate_template('template-parts/materi-card.php');
+                endforeach;
                 ?>
-                <!-- Default Materi -->
-                <article class="materi-card">
-                    <div class="materi-card-image"><i class="fas fa-desktop"></i></div>
-                    <div class="materi-card-content">
-                        <span class="materi-card-badge">Bab 1</span>
-                        <h3>Pengenalan Komputer</h3>
-                        <p>Mengenal apa itu komputer, sejarah perkembangannya, dan jenis-jenis komputer yang ada.</p>
-                        <div class="materi-card-actions">
-                            <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download PDF</a>
-                            <button class="btn btn-primary" onclick="openQuiz('pengenalan-komputer')"><i
-                                    class="fas fa-pen"></i> Quiz</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="materi-card">
-                    <div class="materi-card-image"><i class="fas fa-keyboard"></i></div>
-                    <div class="materi-card-content">
-                        <span class="materi-card-badge">Bab 2</span>
-                        <h3>Perangkat Keras (Hardware)</h3>
-                        <p>Memahami komponen fisik komputer seperti CPU, monitor, keyboard, mouse, dan lainnya.</p>
-                        <div class="materi-card-actions">
-                            <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download PDF</a>
-                            <button class="btn btn-primary" onclick="openQuiz('hardware')"><i class="fas fa-pen"></i>
-                                Quiz</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="materi-card">
-                    <div class="materi-card-image"><i class="fas fa-compact-disc"></i></div>
-                    <div class="materi-card-content">
-                        <span class="materi-card-badge">Bab 3</span>
-                        <h3>Perangkat Lunak (Software)</h3>
-                        <p>Mengenal sistem operasi, aplikasi, dan berbagai jenis software yang digunakan sehari-hari.</p>
-                        <div class="materi-card-actions">
-                            <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download PDF</a>
-                            <button class="btn btn-primary" onclick="openQuiz('software')"><i class="fas fa-pen"></i>
-                                Quiz</button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="materi-card">
-                    <div class="materi-card-image"><i class="fas fa-globe"></i></div>
-                    <div class="materi-card-content">
-                        <span class="materi-card-badge">Bab 4</span>
-                        <h3>Internet & Jaringan</h3>
-                        <p>Memahami cara kerja internet, browser, email, dan komunikasi digital yang aman.</p>
-                        <div class="materi-card-actions">
-                            <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download PDF</a>
-                            <button class="btn btn-primary" onclick="openQuiz('internet')"><i class="fas fa-pen"></i>
-                                Quiz</button>
-                        </div>
-                    </div>
-                </article>
+                <p class="materi-sample-notice"><i class="fas fa-info-circle"></i> Contoh materi per kelas. Tambahkan materi lengkap di <strong>WP-Admin → Materi TIK</strong> beserta TP dan URL video YouTube/Vimeo.</p>
             <?php endif; ?>
         </div>
     </div>
 </section>
+
+<!-- Modal Video -->
+<div id="materi-video-modal" class="materi-video-modal" aria-hidden="true">
+    <div class="materi-video-modal-backdrop"></div>
+    <div class="materi-video-modal-content">
+        <button type="button" class="materi-video-close" aria-label="Tutup">&times;</button>
+        <h3 id="materi-video-modal-title"></h3>
+        <div id="materi-video-modal-embed"></div>
+    </div>
+</div>
 
 <!-- CTA Section -->
 <section class="cta-section">

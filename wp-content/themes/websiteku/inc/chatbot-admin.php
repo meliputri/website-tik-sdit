@@ -76,6 +76,7 @@ function websiteku_chatbot_details_callback($post)
     $answer = get_post_meta($post->ID, '_chatbot_answer', true);
     $keywords = get_post_meta($post->ID, '_chatbot_keywords', true);
     $category = get_post_meta($post->ID, '_chatbot_category', true);
+    $kelas = get_post_meta($post->ID, '_chatbot_kelas', true);
 
     ?>
     <style>
@@ -121,6 +122,17 @@ function websiteku_chatbot_details_callback($post)
             margin-bottom: 5px;
         }
     </style>
+
+    <div class="chatbot-meta-row">
+        <label for="chatbot_kelas">Kelas (opsional)</label>
+        <select id="chatbot_kelas" name="chatbot_kelas">
+            <option value="" <?php selected($kelas, ''); ?>>Semua Kelas</option>
+            <?php foreach (websiteku_get_kelas_options() as $val => $label): ?>
+                <option value="<?php echo esc_attr($val); ?>" <?php selected($kelas, $val); ?>><?php echo esc_html($label); ?></option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description">Batasi Q&amp;A ini untuk kelas tertentu (kosongkan untuk semua kelas).</p>
+    </div>
 
     <div class="chatbot-meta-row">
         <label for="chatbot_category">Kategori</label>
@@ -191,6 +203,10 @@ function websiteku_save_chatbot_meta($post_id)
 
     if (isset($_POST['chatbot_category'])) {
         update_post_meta($post_id, '_chatbot_category', sanitize_text_field($_POST['chatbot_category']));
+    }
+
+    if (isset($_POST['chatbot_kelas'])) {
+        update_post_meta($post_id, '_chatbot_kelas', sanitize_text_field($_POST['chatbot_kelas']));
     }
 }
 add_action('save_post_chatbot_qa', 'websiteku_save_chatbot_meta');
@@ -268,15 +284,21 @@ function websiteku_get_chatbot_data_from_db()
             $question = strtolower(get_the_title());
             $answer = get_post_meta(get_the_ID(), '_chatbot_answer', true);
             $keywords_str = get_post_meta(get_the_ID(), '_chatbot_keywords', true);
+            $qa_kelas = get_post_meta(get_the_ID(), '_chatbot_kelas', true);
 
             $keywords = [];
             if ($keywords_str) {
                 $keywords = array_map('trim', explode(',', strtolower($keywords_str)));
             }
+            if ($qa_kelas) {
+                $keywords[] = 'kelas ' . $qa_kelas;
+                $keywords[] = 'kls ' . $qa_kelas;
+            }
 
             $data[$question] = [
                 'answer' => $answer,
                 'keywords' => $keywords,
+                'kelas' => $qa_kelas,
             ];
         }
         wp_reset_postdata();

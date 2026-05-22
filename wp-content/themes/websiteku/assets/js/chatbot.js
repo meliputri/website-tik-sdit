@@ -6,6 +6,69 @@
 
 (function() {
     'use strict';
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function getSelectedKelas() {
+        const sel = document.getElementById('chatbot-kelas-select');
+        if (!sel) return '';
+        return sel.value || '';
+    }
+
+    function findMateriResponse(message) {
+        if (typeof websitekuMateriContext === 'undefined' || !websitekuMateriContext.items) {
+            return null;
+        }
+        const msg = message.toLowerCase().trim();
+        const kelas = getSelectedKelas();
+        let best = null;
+        let bestScore = 0;
+
+        websitekuMateriContext.items.forEach(function (item) {
+            if (kelas && kelas !== 'all' && String(item.kelas) !== String(kelas)) {
+                return;
+            }
+            let score = 0;
+            if (msg.includes(item.title.toLowerCase())) score += 5;
+            if (item.keywords) {
+                item.keywords.forEach(function (kw) {
+                    if (kw && msg.includes(kw)) score += 2;
+                });
+            }
+            if (msg.includes('kelas ' + item.kelas) || msg.includes('kls ' + item.kelas)) score += 3;
+            if (msg.includes('tp') || msg.includes('tujuan pembelajaran')) score += 1;
+            if (score > bestScore) {
+                bestScore = score;
+                best = item;
+            }
+        });
+
+        if (best && bestScore >= 2) {
+            return best.answer;
+        }
+        return null;
+    }
+
+    function getTpKelasResponse(message) {
+        const msg = message.toLowerCase();
+        const kelasMatch = msg.match(/kelas\s*(\d)/) || msg.match(/kls\s*(\d)/) || msg.match(/tp\s*kelas\s*(\d)/);
+        if (!kelasMatch || typeof websitekuMateriContext === 'undefined' || !websitekuMateriContext.tp_referensi) {
+            return null;
+        }
+        const k = kelasMatch[1];
+        const list = websitekuMateriContext.tp_referensi[k];
+        if (!list || !list.length) return null;
+        let answer = '📋 **TP Informatika/TIK Kelas ' + k + ':**\n\n';
+        list.forEach(function (tp, i) {
+            answer += (i + 1) + '. ' + tp + '\n';
+        });
+        answer += '\nPilih materi Kelas ' + k + ' di halaman beranda atau tanyakan judul materinya.';
+        return answer;
+    }
     
     // ========== Suggested Questions ==========
     const suggestedQuestions = [
@@ -41,9 +104,9 @@
                             </div>
                         </div>
                         <div class="chatbot-header-actions">
-                            <a id="chatbot-newtab" class="chatbot-newtab" href="#" target="_blank" title="Buka di tab baru" aria-label="Buka di tab baru">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
+                            <select id="chatbot-kelas-select" class="chatbot-kelas-select" title="Pilih kelas">
+                                <option value="">Semua Kelas</option>
+                            </select>
                             <button id="chatbot-close" class="chatbot-close" aria-label="Tutup">✕</button>
                         </div>
                     </div>
@@ -52,9 +115,9 @@
                     <div id="chatbot-messages" class="chatbot-messages">
                         <div class="chatbot-message bot">
                             <div class="chatbot-message-content">
-                                Halo! 👋 Saya Asisten TIK SDIT Global Insan Madani. 
+                                Halo! 👋 Saya Asisten TIK. Pilih <strong>kelas</strong> di atas agar jawaban sesuai TP dan materi kelasmu.
                                 <br><br>
-                                Silakan tanyakan apa saja tentang materi TIK, atau klik salah satu pertanyaan di bawah:
+                                Tanyakan materi, TP, atau video pembelajaran — contoh: &quot;TP kelas 4&quot; atau &quot;materi internet&quot;
                             </div>
                         </div>
                         
@@ -111,12 +174,23 @@
             toggle.classList.remove('active');
         });
         
-        // New tab button - set href from n8n config
-        const newTabBtn = document.getElementById('chatbot-newtab');
-        if (newTabBtn && typeof websitekuN8nConfig !== 'undefined' && websitekuN8nConfig.webhook_url) {
-            newTabBtn.href = websitekuN8nConfig.webhook_url;
-        } else if (newTabBtn) {
-            newTabBtn.style.display = 'none'; // Hide if no n8n URL
+        const kelasSelect = document.getElementById('chatbot-kelas-select');
+        if (kelasSelect && typeof websitekuN8nConfig !== 'undefined' && websitekuN8nConfig.kelas_options) {
+            Object.keys(websitekuN8nConfig.kelas_options).forEach(function (key) {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = websitekuN8nConfig.kelas_options[key];
+                kelasSelect.appendChild(opt);
+            });
+            try {
+                const saved = localStorage.getItem('websiteku_kelas');
+                if (saved && saved !== 'all') kelasSelect.value = saved;
+            } catch (e) {}
+            kelasSelect.addEventListener('change', function () {
+                try {
+                    localStorage.setItem('websiteku_kelas', kelasSelect.value || 'all');
+                } catch (e) {}
+            });
         }
         
         // Send message on button click
@@ -175,7 +249,8 @@
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `chatbot-message ${sender}`;
-            messageDiv.innerHTML = `<div class="chatbot-message-content">${text.replace(/\n/g, '<br>')}</div>`;
+            const safe = escapeHtml(text).replace(/\n/g, '<br>');
+            messageDiv.innerHTML = '<div class="chatbot-message-content">' + safe + '</div>';
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -244,6 +319,7 @@
             formData.append('action', 'websiteku_chatbot_n8n');
             formData.append('nonce', websitekuN8nConfig.nonce);
             formData.append('message', userMessage);
+            formData.append('kelas', getSelectedKelas());
             
             // Create timeout promise
             const timeoutPromise = new Promise(function(resolve) {
@@ -296,6 +372,12 @@
         
         // Get rule-based response (fallback)
         function getRuleBasedResponse(message) {
+            const tpAnswer = getTpKelasResponse(message);
+            if (tpAnswer) return tpAnswer;
+
+            const materiAnswer = findMateriResponse(message);
+            if (materiAnswer) return materiAnswer;
+
             if (typeof ChatbotData !== 'undefined') {
                 // First, try exact match
                 if (ChatbotData[message]) {
@@ -312,6 +394,10 @@
                         return data.answer;
                     }
                     
+                    if (data.kelas && getSelectedKelas() && String(data.kelas) !== String(getSelectedKelas())) {
+                        continue;
+                    }
+
                     if (data.keywords && data.keywords.length > 0) {
                         for (const keyword of data.keywords) {
                             if (message.includes(keyword)) {
@@ -337,6 +423,10 @@
     // Note: This is a wrapper, actual function is inside initChatbot scope
     window.getRuleBasedResponse = function(message) {
         const msg = (message || '').toLowerCase().trim();
+        const tpAnswer = getTpKelasResponse(msg);
+        if (tpAnswer) return tpAnswer;
+        const materiAnswer = findMateriResponse(msg);
+        if (materiAnswer) return materiAnswer;
         if (typeof ChatbotData !== 'undefined') {
             if (ChatbotData[msg]) {
                 return ChatbotData[msg].answer;
@@ -346,6 +436,9 @@
                 const data = ChatbotData[key];
                 if (msg.includes(key)) {
                     return data.answer;
+                }
+                if (data.kelas && getSelectedKelas() && String(data.kelas) !== String(getSelectedKelas())) {
+                    continue;
                 }
                 if (data.keywords && data.keywords.length > 0) {
                     for (const keyword of data.keywords) {
@@ -381,6 +474,17 @@
                 input.focus();
             }
         }
+    };
+
+    window.openChatbotWithKelas = function(kelas) {
+        const sel = document.getElementById('chatbot-kelas-select');
+        if (sel && kelas) {
+            sel.value = String(kelas);
+            try {
+                localStorage.setItem('websiteku_kelas', String(kelas));
+            } catch (e) {}
+        }
+        window.openChatbot();
     };
     
     // ========== Initialize on DOM ready ==========

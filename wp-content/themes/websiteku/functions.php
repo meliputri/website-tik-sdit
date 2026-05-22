@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Materi helpers (kelas, TP, video)
+require_once get_template_directory() . '/inc/materi-helpers.php';
+
 // Include Custom Post Types
 require_once get_template_directory() . '/inc/custom-post-types.php';
 
@@ -108,26 +111,57 @@ function websiteku_scripts()
         true
     );
 
+    wp_enqueue_script(
+        'websiteku-materi-kelas',
+        get_template_directory_uri() . '/assets/js/materi-kelas.js',
+        array(),
+        wp_get_theme()->get('Version'),
+        true
+    );
+
+    wp_localize_script('websiteku-materi-kelas', 'websitekuMateriContext', array(
+        'items' => websiteku_get_materi_chatbot_context(),
+        'tp_referensi' => websiteku_get_tp_referensi_kelas(),
+    ));
+
     // Chatbot script
     wp_enqueue_script(
         'websiteku-chatbot',
         get_template_directory_uri() . '/assets/js/chatbot.js',
-        array('websiteku-chatbot-data'),
+        array('websiteku-chatbot-data', 'websiteku-materi-kelas'),
         wp_get_theme()->get('Version'),
         true
     );
 
     // Pass n8n config to frontend
+    $n8n_timeout_sec = absint(websiteku_get_option('n8n_timeout', 30));
+    if ($n8n_timeout_sec < 5) {
+        $n8n_timeout_sec = 30;
+    }
+
     $n8n_config = array(
         'enabled' => websiteku_get_option('n8n_enabled', '0') === '1',
         'webhook_url' => websiteku_get_option('n8n_webhook_url', ''),
-        'timeout' => 30000, // 30 seconds timeout for AI response
+        'timeout' => $n8n_timeout_sec * 1000,
         'api_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('websiteku_chatbot_n8n'),
         'school_name' => websiteku_get_option('school_name', 'SDIT Global Insan Madani'),
         'leaderboard_nonce' => wp_create_nonce('websiteku_leaderboard_nonce'),
+        'kelas_options' => websiteku_get_kelas_options(),
     );
     wp_localize_script('websiteku-chatbot', 'websitekuN8nConfig', $n8n_config);
+
+    wp_enqueue_style(
+        'websiteku-materi',
+        get_template_directory_uri() . '/assets/css/materi.css',
+        array(),
+        wp_get_theme()->get('Version')
+    );
+
+    wp_localize_script('websiteku-quiz', 'websiteku_vars', array(
+        'rest_url' => esc_url_raw(rest_url()),
+        'home_url' => esc_url_raw(home_url('/')),
+    ));
 
     // Quiz styles
     wp_enqueue_style(
@@ -298,6 +332,8 @@ function websiteku_chatbot_n8n_proxy()
         return;
     }
 
+    $user_kelas = isset($_POST['kelas']) ? absint($_POST['kelas']) : 0;
+
     // Get user message
     $user_message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
     if (empty($user_message)) {
@@ -316,14 +352,28 @@ function websiteku_chatbot_n8n_proxy()
 
     // Prepare request to n8n chat trigger
     // Format sesuai dengan n8n Chat Trigger node
+    $materi_context = websiteku_get_materi_chatbot_context($user_kelas > 0 ? (string) $user_kelas : null);
+    $context_summary = array();
+    foreach (array_slice($materi_context, 0, 8) as $m) {
+        $context_summary[] = $m['title'] . ' (Kelas ' . $m['kelas'] . '): ' . wp_trim_words($m['answer'], 40, '...');
+    }
+
     $body = array(
         'action' => 'sendMessage',
         'sessionId' => $session_id,
-        'chatInput' => $user_message
+        'chatInput' => $user_message,
+        'kelas' => $user_kelas,
+        'materiContext' => $context_summary,
+        'schoolName' => websiteku_get_option('school_name', 'SDIT Global Insan Madani'),
     );
 
+    $proxy_timeout = absint(websiteku_get_option('n8n_timeout', 30));
+    if ($proxy_timeout < 5) {
+        $proxy_timeout = 30;
+    }
+
     $response = wp_remote_post($n8n_webhook, array(
-        'timeout' => 30, // 30 seconds for AI response
+        'timeout' => $proxy_timeout,
         'headers' => array(
             'Content-Type' => 'application/json',
         ),

@@ -130,8 +130,18 @@ const ChatbotData = {
     },
     
     // ========== Default Response ==========
+    "tp kelas": {
+        answer: "Ketik misalnya: **TP kelas 3** atau **materi kelas 5** agar saya menampilkan Tujuan Pembelajaran dan materi sesuai kelasmu. Jangan lupa pilih kelas di dropdown chatbot.",
+        keywords: ["tujuan pembelajaran", "tp", "kurikulum", "materi kelas"]
+    },
+
+    "materi video": {
+        answer: "Banyak materi memiliki **video animasi** 🎬. Di halaman beranda, filter kelas lalu klik tombol **Video** pada kartu materi. Guru dapat menambah link YouTube/Vimeo di WP-Admin → Materi TIK.",
+        keywords: ["video", "animasi", "youtube", "belajar"]
+    },
+
     "default": {
-        answer: "Maaf, saya belum memahami pertanyaan kamu. Coba tanyakan tentang:\n• Apa itu komputer\n• Hardware & Software\n• Internet & Browser\n• Keamanan digital\n• Microsoft Office\n\nAtau ketik pertanyaan dengan kata kunci yang lebih spesifik! 😊",
+        answer: "Maaf, saya belum menemukan jawaban yang pas. Coba:\n• Pilih **kelas** di atas chatbot\n• Tanya: **TP kelas 4** atau judul materi\n• Contoh: hardware, internet, pengolah kata\n\nLihat juga daftar materi di halaman **Materi Pembelajaran**.",
         keywords: []
     }
 };
